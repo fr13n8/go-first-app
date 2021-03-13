@@ -64,7 +64,7 @@ func UpdateUser(c *gin.Context) {
 	return
 }
 
-func PasswordChecker(input *models.SignUpData, c *gin.Context) ([]byte, error) {
+func PasswordVerify(input *models.SignUpData, c *gin.Context) ([]byte, error) {
 	if input.Password != input.PasswordConfirm {
 		return nil, errors.New("Password doesnt match")
 	}

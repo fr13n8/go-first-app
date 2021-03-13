@@ -15,7 +15,7 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	password, err := UserController.PasswordChecker(&input, c)
+	password, err := UserController.PasswordVerify(&input, c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

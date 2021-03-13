@@ -13,10 +13,12 @@ func main() {
 	models.ConnectDataBase() // new
 
 	r.GET("/users", UserController.FindUsers)
-	r.POST("/users/new", AuthController.SignUp)
 	r.GET("/users/:id", UserController.GetUser)
 	r.PUT("/users/:id", UserController.UpdateUser)
 	r.DELETE("/users/:id", UserController.DeleteUser)
+
+	r.POST("/signup", AuthController.SignUp)
+	r.POST("/signin", AuthController.SignIn)
 
 	r.Run()
 }
