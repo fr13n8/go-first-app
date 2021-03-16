@@ -82,7 +82,7 @@ func PasswordVerify(input *models.SignUpData, c *gin.Context) ([]byte, error) {
 func JwtGenerate(u models.User) ([]byte, error) {
 	var hs = jwt.NewHS256([]byte("secret"))
 	now := time.Now()
-	pl := models.JwtPayload{
+	pl := &models.JwtPayload{
 		Payload: jwt.Payload{
 			Issuer:         "gbrlsnchs",
 			Subject:        "someone",
