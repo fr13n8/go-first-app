@@ -2,6 +2,8 @@ package Auth
 
 import (
 	UserController "Users/controllers/User"
+	"Users/httputil"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -13,21 +15,29 @@ func JwtVerify() gin.HandlerFunc {
 		token := c.Request.Header.Get("Authorization")
 
 		if token == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unathorized request"})
+			httputil.NewError(c, http.StatusUnauthorized, errors.New("Unathorized request!"))
+			c.Abort()
 			return
 		}
 
 		splitToken := strings.Split(token, "Bearer ")
+
+		if len(splitToken) != 2 {
+			httputil.NewError(c, http.StatusUnauthorized, errors.New("Broken auth token!"))
+			c.Abort()
+			return
+		}
 		token = splitToken[1]
 
-		jh, err := UserController.JwtVerify([]byte(token))
+		_, err := UserController.JwtVerify([]byte(token))
 
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			httputil.NewError(c, http.StatusUnauthorized, err)
+			c.Abort()
 			return
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"data": jh})
+		c.Next()
 		return
 	}
 }

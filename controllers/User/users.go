@@ -22,6 +22,7 @@ import (
 // @Failure 400,404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
 // @Failure default {object} httputil.HTTPError
+// @Security ApiKeyAuth
 // @Router /users [get]
 func GetUsers(c *gin.Context) {
 	var users []models.User
@@ -43,7 +44,8 @@ func GetUsers(c *gin.Context) {
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
-// @Router /user/{id} [get]
+// @Security ApiKeyAuth
+// @Router /users/{id} [get]
 func GetUser(c *gin.Context) {
 	var user models.User
 
@@ -68,6 +70,7 @@ func GetUser(c *gin.Context) {
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
+// @Security ApiKeyAuth
 // @Router /users/{id} [delete]
 func DeleteUser(c *gin.Context) {
 	var user models.User
@@ -95,6 +98,7 @@ func DeleteUser(c *gin.Context) {
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
+// @Security ApiKeyAuth
 // @Router /users/{id} [put]
 func UpdateUser(c *gin.Context) {
 	var user *models.User
@@ -134,17 +138,17 @@ func JwtGenerate(u models.User) ([]byte, error) {
 	now := time.Now()
 	pl := &models.JwtPayload{
 		Payload: jwt.Payload{
-			Issuer:         "gbrlsnchs",
-			Subject:        "someone",
+			Issuer:         "test@go.com",
+			Subject:        "http://foo1.com",
 			Audience:       jwt.Audience{"https://golang.org", "https://jwt.io"},
 			ExpirationTime: jwt.NumericDate(now.Add(24 * 30 * 12 * time.Hour)),
 			NotBefore:      jwt.NumericDate(now.Add(30 * time.Minute)),
 			IssuedAt:       jwt.NumericDate(now),
 			JWTID:          "foobar",
 		},
-		Name:  u.Name,
-		Age:   int(u.Age),
-		Email: u.Email,
+		// Name:  u.Name,
+		// Age:   int(u.Age),
+		// Email: u.Email,
 	}
 
 	token, err := jwt.Sign(pl, hs)

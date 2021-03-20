@@ -52,5 +52,5 @@ func SignIn(c *gin.Context) {
 		httputil.NewError(c, http.StatusInternalServerError, err)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": user, "token": token})
+	c.JSON(http.StatusOK, gin.H{"data": user, "token": string(token)})
 }
