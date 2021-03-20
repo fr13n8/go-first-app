@@ -1,6 +1,7 @@
 package UserController
 
 import (
+	"Users/httputil"
 	"Users/models"
 	"errors"
 	"net/http"
@@ -11,7 +12,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func FindUsers(c *gin.Context) {
+// ListUsers godoc
+// @Summary List users
+// @Tags users
+// @Description Get users
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.User
+// @Failure 400,404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Failure default {object} httputil.HTTPError
+// @Router /users [get]
+func GetUsers(c *gin.Context) {
 	var users []models.User
 
 	models.DB.Find(&users)
@@ -20,11 +32,24 @@ func FindUsers(c *gin.Context) {
 	return
 }
 
+// GetUser godoc
+// @Summary Get user details
+// @Description get string by ID
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param id path int true "User ID"
+// @Success 200 {object} models.User
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /user/{id} [get]
 func GetUser(c *gin.Context) {
 	var user models.User
 
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		// c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		httputil.NewError(c, http.StatusNotFound, err)
 		return
 	}
 
@@ -32,6 +57,18 @@ func GetUser(c *gin.Context) {
 	return
 }
 
+// DeleteUser godoc
+// @Summary Delete an user
+// @Description Delete by user ID
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param  id path int true "User ID" Format(int64)
+// @Success 204 {string} string "status"
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /users/{id} [delete]
 func DeleteUser(c *gin.Context) {
 	var user models.User
 
@@ -46,8 +83,21 @@ func DeleteUser(c *gin.Context) {
 	return
 }
 
+// UpdateAccount godoc
+// @Summary Update an user
+// @Description Update by json user
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param  id path int true "User ID"
+// @Param  user body models.UpdatedData true "Update user"
+// @Success 200 {object} models.User
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /users/{id} [put]
 func UpdateUser(c *gin.Context) {
-	var user models.User
+	var user *models.User
 
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
@@ -61,8 +111,8 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	models.DB.Model(&user).Updates(&models.User{Age: input.Age})
-	c.JSON(http.StatusOK, gin.H{"data": "Successfuly updated!"})
+	models.DB.Model(&user).Updates(&models.User{Age: input.Age, Name: input.Name, Email: input.Email})
+	c.JSON(http.StatusOK, gin.H{"data": &user})
 	return
 }
 

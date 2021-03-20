@@ -6,21 +6,21 @@ import (
 )
 
 type User struct {
-	gorm.Model
 	Name             string    `json:"name"`
 	Age              uint      `json:"age"`
 	Email            string    `json:"email" gorm:"unique	"`
 	Password         string    `json:"password"`
 	SendedMessages   []Message `gorm:"foreignKey:SenderId"`
 	ReceivedMessages []Message `gorm:"foreignKey:ReceiverId"`
+	gorm.Model
 }
 
 type SignUpData struct {
 	Name            string `json:"name" binding:"required"`
 	Email           string `json:"email" binding:"required"`
 	Age             uint   `json:"age" binding:"required"`
-	Password        string `json:"password"`
-	PasswordConfirm string `json:"passwordConfirm"`
+	Password        string `json:"password" binding:"required"`
+	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
 }
 
 type SignInData struct {

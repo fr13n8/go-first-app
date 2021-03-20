@@ -2,22 +2,35 @@ package AuthController
 
 import (
 	UserController "Users/controllers/User"
+	"Users/httputil"
 	"Users/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
+// SignUp godoc
+// @Summary Sign Up
+// @Description add by json account
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param credentials body models.SignUpData true "Sign Up account"
+// @Success 200 {object} models.User
+// @Failure 400 {object} httputil.HTTPError
+// @Failure 404 {object} httputil.HTTPError
+// @Failure 500 {object} httputil.HTTPError
+// @Router /auth/signup [post]
 func SignUp(c *gin.Context) {
 	var input models.SignUpData
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		httputil.NewError(c, http.StatusBadRequest, err)
 		return
 	}
 
 	password, err := UserController.PasswordVerify(&input, c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		httputil.NewError(c, http.StatusBadRequest, err)
 		return
 	}
 
@@ -29,7 +42,7 @@ func SignUp(c *gin.Context) {
 	}
 
 	if err := models.DB.Create(&user).Error; err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		httputil.NewError(c, http.StatusInternalServerError, err)
 		return
 	}
 
