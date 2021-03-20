@@ -2,14 +2,17 @@ package models
 
 import (
 	"github.com/gbrlsnchs/jwt/v3"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID       uint   `json:"id" gorm:"primary_key"`
-	Name     string `json:"name"`
-	Age      uint   `json:"age"`
-	Email    string `json:"email" gorm:"unique	"`
-	Password string `json:"password"`
+	gorm.Model
+	Name             string    `json:"name"`
+	Age              uint      `json:"age"`
+	Email            string    `json:"email" gorm:"unique	"`
+	Password         string    `json:"password"`
+	SendedMessages   []Message `gorm:"foreignKey:SenderId"`
+	ReceivedMessages []Message `gorm:"foreignKey:ReceiverId"`
 }
 
 type SignUpData struct {
