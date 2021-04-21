@@ -52,5 +52,7 @@ func SignIn(c *gin.Context) {
 		httputil.NewError(c, http.StatusInternalServerError, err)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": user, "token": string(token)})
+	c.JSON(http.StatusOK, &models.SignInResponseData{
+		User:user, Token: string(token),
+	})
 }

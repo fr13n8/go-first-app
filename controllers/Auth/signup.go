@@ -31,8 +31,10 @@ func SignUp(c *gin.Context) {
 	}
 	validate := validator.New()
 	if err := validate.Struct(&input); err != nil {
-		httputil.NewError(c, http.StatusBadRequest, err)
-		return
+		for _, fieldErr := range err.(validator.ValidationErrors) {
+			httputil.NewError(c, http.StatusBadRequest, fieldErr)
+			return // exit on first error
+		}
 	}
 
 	password, err := UserController.PasswordVerify(&input)
@@ -51,7 +53,7 @@ func SignUp(c *gin.Context) {
 	if err := models.DB.Create(&user).Error; err != nil {
 		var mysqlErr = err.(*mysql.MySQLError)
 		if mysqlErr.Number == 1062 {
-			httputil.NewError(c, http.StatusInternalServerError, errors.New("This email already exists."))
+			httputil.NewError(c, http.StatusInternalServerError, errors.New("Key: 'SignUpData.Email' Error:This email already exists."))
 		}
 		return
 	}

@@ -27,7 +27,7 @@ type SignInData struct {
 }
 
 type SignInResponseData struct {
-	Data    User `json:"data" binding:"required"`
+	User    User `json:"user" binding:"required"`
 	Token string `json:"token" binding:"required"`
 }
 
