@@ -6,10 +6,10 @@ import (
 )
 
 type User struct {
-	Name             string    `json:"name"`
-	Age              uint      `json:"age"`
-	Email            string    `json:"email" gorm:"unique"`
-	Password         string    `json:"password"`
+	Name     string `json:"name"`
+	Age      uint   `json:"age"`
+	Email    string `json:"email" gorm:"unique"`
+	Password string `json:"-"`
 	gorm.Model
 }
 
@@ -27,7 +27,7 @@ type SignInData struct {
 }
 
 type SignInResponseData struct {
-	User    User `json:"user" binding:"required"`
+	User  User   `json:"user" binding:"required"`
 	Token string `json:"token" binding:"required"`
 }
 
