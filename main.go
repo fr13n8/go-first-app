@@ -4,6 +4,7 @@ import (
 	"Users/docs"
 	"Users/models"
 	"Users/routes"
+	"github.com/gin-contrib/cors"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -30,12 +31,12 @@ func main() {
 	docs.SwaggerInfo.Title = "Swagger api for chat"
 	docs.SwaggerInfo.Description = "This is a sample server Chat server."
 	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.Host = "localhost:9090"
 	docs.SwaggerInfo.BasePath = "/"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	r := gin.Default()
-
+	r.Use(cors.Default())
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -45,5 +46,8 @@ func main() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	routes.InjectApi(r)
-	r.Run()
+	err = r.Run("localhost:9090")
+	if err != nil {
+		log.Fatal("Error to run: " + err.Error())
+	}
 }

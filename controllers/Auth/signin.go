@@ -23,7 +23,7 @@ type SignInCreds struct {
 // @Accept  json
 // @Produce  json
 // @Param credentials body models.SignInData true "Sign In account"
-// @Success 200 {object} SignInCreds
+// @Success 200 {object} models.SignInResponseData
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError

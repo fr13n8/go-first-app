@@ -11,9 +11,9 @@ func Routes(route *gin.Engine) {
 	user := route.Group("/users")
 	user.Use(Auth.JwtVerify())
 	{
-		user.GET("/", UserController.GetUsers).Use(Auth.JwtVerify())
-		user.GET("/:id", UserController.GetUser).Use(Auth.JwtVerify())
-		user.PUT("/:id", UserController.UpdateUser).Use(Auth.JwtVerify())
-		user.DELETE("/:id", UserController.DeleteUser).Use(Auth.JwtVerify())
+		user.GET("/", UserController.GetUsers)
+		user.GET("/:id", UserController.GetUser)
+		user.PUT("/:id", UserController.UpdateUser)
+		user.DELETE("/:id", UserController.DeleteUser)
 	}
 }

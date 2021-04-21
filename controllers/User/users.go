@@ -120,7 +120,7 @@ func UpdateUser(c *gin.Context) {
 	return
 }
 
-func PasswordVerify(input *models.SignUpData, c *gin.Context) ([]byte, error) {
+func PasswordVerify(input *models.SignUpData) ([]byte, error) {
 	if input.Password != input.PasswordConfirm {
 		return nil, errors.New("Password doesnt match")
 	}
@@ -139,16 +139,16 @@ func JwtGenerate(u models.User) ([]byte, error) {
 	pl := &models.JwtPayload{
 		Payload: jwt.Payload{
 			Issuer:         "test@go.com",
-			Subject:        "http://foo1.com",
+			Subject:        "https://foo1.com",
 			Audience:       jwt.Audience{"https://golang.org", "https://jwt.io"},
 			ExpirationTime: jwt.NumericDate(now.Add(24 * 30 * 12 * time.Hour)),
 			NotBefore:      jwt.NumericDate(now.Add(30 * time.Minute)),
 			IssuedAt:       jwt.NumericDate(now),
 			JWTID:          "foobar",
 		},
-		// Name:  u.Name,
-		// Age:   int(u.Age),
-		// Email: u.Email,
+		Name:  u.Name,
+		Age:   int(u.Age),
+		Email: u.Email,
 	}
 
 	token, err := jwt.Sign(pl, hs)

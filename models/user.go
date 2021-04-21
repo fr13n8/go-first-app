@@ -8,24 +8,27 @@ import (
 type User struct {
 	Name             string    `json:"name"`
 	Age              uint      `json:"age"`
-	Email            string    `json:"email" gorm:"unique	"`
+	Email            string    `json:"email" gorm:"unique"`
 	Password         string    `json:"password"`
-	SendedMessages   []Message `gorm:"foreignKey:SenderId"`
-	ReceivedMessages []Message `gorm:"foreignKey:ReceiverId"`
 	gorm.Model
 }
 
 type SignUpData struct {
-	Name            string `json:"name" binding:"required"`
-	Email           string `json:"email" binding:"required"`
-	Age             uint   `json:"age" binding:"required"`
-	Password        string `json:"password" binding:"required"`
-	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
+	Name            string `json:"name" validate:"required" binding:"required"`
+	Email           string `json:"email" validate:"email" binding:"required"`
+	Age             uint   `json:"age" binding:"required,numeric"`
+	Password        string `json:"password" validate:"min=5,max=32" binding:"required"`
+	PasswordConfirm string `json:"passwordConfirm" validate:"eqfield=Password,required" binding:"required"`
 }
 
 type SignInData struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
+}
+
+type SignInResponseData struct {
+	Data    User `json:"data" binding:"required"`
+	Token string `json:"token" binding:"required"`
 }
 
 type UpdatedData struct {
