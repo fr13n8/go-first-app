@@ -49,11 +49,11 @@ func SignUp(c *gin.Context) {
 	}
 
 	if err := models.DB.Create(&user).Error; err != nil {
-		var mysqlErr mysql.MySQLError
-		if errors.Is(err, &mysqlErr) && mysqlErr.Number == 1062 {
+		var mysqlErr = err.(*mysql.MySQLError)
+		if mysqlErr.Number == 1062 {
 			httputil.NewError(c, http.StatusInternalServerError, errors.New("This email already exists."))
-			return
 		}
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
