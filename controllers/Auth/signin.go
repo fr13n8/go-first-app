@@ -3,6 +3,7 @@ package AuthController
 import (
 	"Users/httputil"
 	"Users/models"
+	"errors"
 	"net/http"
 
 	UserController "Users/controllers/User"
@@ -38,12 +39,12 @@ func SignIn(c *gin.Context) {
 	}
 
 	if err := models.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
-		httputil.NewError(c, http.StatusBadRequest, err)
+		httputil.NewError(c, http.StatusBadRequest, errors.New("User not found."))
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
-		httputil.NewError(c, http.StatusBadRequest, err)
+		httputil.NewError(c, http.StatusBadRequest, errors.New("Wrong password."))
 		return
 	}
 
@@ -53,6 +54,6 @@ func SignIn(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &models.SignInResponseData{
-		User:user, Token: string(token),
+		User: user, Token: string(token),
 	})
 }

@@ -6,11 +6,11 @@ import (
 )
 
 type User struct {
-	Name     string `json:"name"`
-	Age      uint   `json:"age"`
-	Email    string `json:"email" gorm:"unique"`
-	Password string `json:"-"`
-	gorm.Model
+	Name       string `json:"name"`
+	Age        uint   `json:"age"`
+	Email      string `json:"email" gorm:"unique"`
+	Password   string `json:"-"`
+	gorm.Model `json:"-"`
 }
 
 type SignUpData struct {

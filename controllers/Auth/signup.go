@@ -5,10 +5,11 @@ import (
 	"Users/httputil"
 	"Users/models"
 	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-sql-driver/mysql"
-	"net/http"
 )
 
 // SignUp godoc
@@ -55,6 +56,11 @@ func SignUp(c *gin.Context) {
 		if mysqlErr.Number == 1062 {
 			httputil.NewError(c, http.StatusInternalServerError, errors.New("Key: 'SignUpData.Email' Error:This email already exists."))
 		}
+		return
+	}
+
+	if err := user.SendVerifyEmail(); err != nil {
+		httputil.NewError(c, http.StatusInternalServerError, err)
 		return
 	}
 
