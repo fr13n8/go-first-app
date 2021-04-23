@@ -6,16 +6,9 @@ import (
 	"errors"
 	"net/http"
 
-	UserController "Users/controllers/User"
-
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
-
-type SignInCreds struct {
-	data  *models.User
-	token *string
-}
 
 // SignIn godoc
 // @Summary Sign In
@@ -48,7 +41,7 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	token, err := UserController.JwtGenerate(user)
+	token, err := user.JwtGenerate(c)
 	if err != nil {
 		httputil.NewError(c, http.StatusInternalServerError, err)
 	}

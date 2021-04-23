@@ -5,6 +5,7 @@ import (
 	"Users/httputil"
 	"Users/models"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -49,6 +50,7 @@ func SignUp(c *gin.Context) {
 		Age:      input.Age,
 		Email:    input.Email,
 		Password: string(password),
+		Verified: false,
 	}
 
 	if err := models.DB.Create(&user).Error; err != nil {
@@ -59,10 +61,32 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	if err := user.SendVerifyEmail(); err != nil {
-		httputil.NewError(c, http.StatusInternalServerError, err)
+	go func() {
+		if err := user.SendVerifyEmail(c); err != nil {
+			log.Println(err.Error())
+		}
+	}()
+
+	c.JSON(http.StatusOK, gin.H{"data": user})
+}
+
+func Verify(c *gin.Context) {
+	pl, err := UserController.JwtVerify([]byte(c.Param("token")))
+	if err != nil {
+		log.Printf("Error verifying token: %v", err)
+		httputil.NewError(c, http.StatusNotFound, errors.New("Bad token"))
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": user})
+	var user *models.User
+	email := pl.Issuer
+
+	if err := models.DB.Where("email = ?", email).First(&user).Error; err != nil {
+		log.Printf("User not found:%v", err)
+		httputil.NewError(c, http.StatusNotFound, errors.New("User not found"))
+		return
+	}
+
+	models.DB.Model(&user).Updates(&models.User{Verified: true})
+	c.Redirect(http.StatusFound, pl.Subject)
 }

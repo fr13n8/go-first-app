@@ -11,5 +11,6 @@ func Routes(route *gin.Engine) {
 	{
 		auth.POST("/signup", AuthController.SignUp)
 		auth.POST("/signin", AuthController.SignIn)
+		auth.GET("/verify/:token", AuthController.Verify)
 	}
 }

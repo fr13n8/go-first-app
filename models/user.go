@@ -9,6 +9,7 @@ type User struct {
 	Name       string `json:"name"`
 	Age        uint   `json:"age"`
 	Email      string `json:"email" gorm:"unique"`
+	Verified   bool   `json:"verified"`
 	Password   string `json:"-"`
 	gorm.Model `json:"-"`
 }
@@ -39,7 +40,4 @@ type UpdatedData struct {
 
 type JwtPayload struct {
 	jwt.Payload
-	Email string `json:"email,omitempty"`
-	Age   int    `json:"age,omitempty"`
-	Name  string `json:"name,omitempty"`
 }

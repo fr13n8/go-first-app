@@ -5,7 +5,6 @@ import (
 	"Users/models"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/gbrlsnchs/jwt/v3"
 	"github.com/gin-gonic/gin"
@@ -133,39 +132,13 @@ func PasswordVerify(input *models.SignUpData) ([]byte, error) {
 	return password, nil
 }
 
-func JwtGenerate(u models.User) ([]byte, error) {
-	var hs = jwt.NewHS256([]byte("secret"))
-	now := time.Now()
-	pl := &models.JwtPayload{
-		Payload: jwt.Payload{
-			Issuer:         "test@go.com",
-			Subject:        "https://foo1.com",
-			Audience:       jwt.Audience{"https://golang.org", "https://jwt.io"},
-			ExpirationTime: jwt.NumericDate(now.Add(24 * 30 * 12 * time.Hour)),
-			NotBefore:      jwt.NumericDate(now.Add(30 * time.Minute)),
-			IssuedAt:       jwt.NumericDate(now),
-			JWTID:          "foobar",
-		},
-		Name:  u.Name,
-		Age:   int(u.Age),
-		Email: u.Email,
-	}
-
-	token, err := jwt.Sign(pl, hs)
-	if err != nil {
-		return nil, errors.New(err.Error())
-	}
-
-	return token, nil
-}
-
-func JwtVerify(token []byte) (jwt.Header, error) {
+func JwtVerify(token []byte) (models.JwtPayload, error) {
 	var hs = jwt.NewHS256([]byte("secret"))
 	var pl models.JwtPayload
-	hd, err := jwt.Verify(token, hs, &pl)
+	_, err := jwt.Verify(token, hs, &pl)
 	if err != nil {
-		return jwt.Header{}, errors.New(err.Error())
+		return models.JwtPayload{}, errors.New(err.Error())
 	}
 
-	return hd, nil
+	return pl, nil
 }
