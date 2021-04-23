@@ -25,7 +25,6 @@ import (
 func SignIn(c *gin.Context) {
 	var input models.SignInData
 	var user models.User
-
 	if err := c.ShouldBindJSON(&input); err != nil {
 		httputil.NewError(c, http.StatusBadRequest, err)
 		return
@@ -38,6 +37,11 @@ func SignIn(c *gin.Context) {
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 		httputil.NewError(c, http.StatusBadRequest, errors.New("Wrong password."))
+		return
+	}
+
+	if !user.Verified {
+		httputil.NewError(c, http.StatusForbidden, errors.New("Please verify your account"))
 		return
 	}
 
