@@ -14,6 +14,28 @@ definitions:
       message:
         type: string
     type: object
+  models.Message:
+    properties:
+      body:
+        type: string
+      conversationId:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.NewMessage:
+    properties:
+      body:
+        type: string
+      conversationId:
+        type: integer
+    type: object
   models.SignInData:
     properties:
       email:
@@ -26,13 +48,13 @@ definitions:
     type: object
   models.SignInResponseData:
     properties:
-      data:
-        $ref: '#/definitions/models.User'
       token:
         type: string
+      user:
+        $ref: '#/definitions/models.User'
     required:
-    - data
     - token
+    - user
     type: object
   models.SignUpData:
     properties:
@@ -80,10 +102,10 @@ definitions:
         type: integer
       name:
         type: string
-      password:
-        type: string
       updatedAt:
         type: string
+      verified:
+        type: boolean
     type: object
 info:
   contact:
@@ -163,6 +185,40 @@ paths:
       summary: Sign Up
       tags:
       - auth
+  /message/send:
+    post:
+      consumes:
+      - application/json
+      description: send message
+      parameters:
+      - description: Send message
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/models.NewMessage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+      summary: Send Message
+      tags:
+      - message
   /users:
     get:
       consumes:

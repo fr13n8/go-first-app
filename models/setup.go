@@ -30,8 +30,7 @@ func ConnectDataBase() {
 		panic(err.Error())
 	}
 
-	database.AutoMigrate(&User{})
-	database.AutoMigrate(&Message{})
+	database.AutoMigrate(&User{}, &Friend{}, &Conversation{}, &Group{}, &GroupUser{})
 
 	DB = database
 }

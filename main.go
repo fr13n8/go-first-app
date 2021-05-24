@@ -8,6 +8,8 @@ import (
 	"log"
 	"os"
 
+	"Users/routes/Websocket"
+
 	"github.com/gin-contrib/cors"
 
 	"github.com/gin-gonic/gin"
@@ -54,6 +56,9 @@ func main() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	routes.InjectApi(r)
+
+	go Websocket.H.Run()
+
 	err = r.Run(URL)
 	if err != nil {
 		log.Fatal("Error to run: " + err.Error())
